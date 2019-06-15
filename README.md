@@ -1,5 +1,7 @@
 # macos-recycle-interop
-a rough macos c++ sketch/proof-of-concept to dynamically load the REX Shared Library (from macos bundle, available as download from propellerheads) and inspect .rx2 and .rex audio loop files
+a rough macos c++ sketch/proof-of-concept 
+* dynamically load the REX Shared Library (available as download from propellerheads, see below) 
+* inspect .rx2 and .rex audio loop file info with slice info
 
 ## credit
 based on rexlib from https://github.com/noorus/rexlib 
