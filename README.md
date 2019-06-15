@@ -4,9 +4,11 @@ a rough macos c++ sketch/proof-of-concept
 * inspect .rx2 and .rex audio loop file info with slice info
 
 ## credit
-based on rexlib from https://github.com/noorus/rexlib 
-* unfortunately this only works on windows
-* it is refactored nicely. 
+* based on rexlib from https://github.com/noorus/rexlib 
+  * unfortunately this only works on windows 
+  * it is refactored nicely. 
+* Loading dynamic library from .bundle image in macos from stack-overflow
+  * https://stackoverflow.com/questions/54003455/cant-link-to-so-file-on-mac-with-cmake?answertab=votes#tab-top
 
 ## REX-Shared-Library
 Macos bundle with shared recycle library from propellerheads
