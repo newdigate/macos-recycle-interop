@@ -291,6 +291,10 @@ int main( )
     std::cout << "tempo:" << info.tempo / 1000.0 << "\n";
     std::cout << "nativeTempo:" << info.nativeTempo / 1000.0 << "\n";
 
+    std::ofstream myfile;
+    myfile.open ("example.raw");
+
+
     for (long i =0; i<info.slices; i++) {
         Slice slice;
         rc = fnREXGetSliceInfo1(myHandle, i, sizeof(Slice), &slice);
@@ -310,14 +314,19 @@ int main( )
             std::cerr << "REXRenderSlice failed  to render slice " << i << "\n";
         }
 
-        for (long j=0; j<slice.length/2; j++) {
-            std::cout << "(" << buffers[0][j] << ", " << buffers[1][j] << "),\t";
+        for (long j=0; j<slice.length; j++) {
+            std::cout << "(" << (long)(buffers[0][j] * 0xFFFF) << ", " << (long)(buffers[1][j]*0xFFFF) << "),";
+            int16_t b[2];
+            b[0] = (int32_t)(buffers[0][j] * 0x7FFF);
+            b[1] = (int32_t)(buffers[1][j] * 0x7FFF);
+            myfile.write((char*)b, 4);
         }
         std::cout << "\n";
 
         delete [] buffers[0];
         delete [] buffers[1];
     }
+    myfile.close();
 
     fnClose1();
     printf("closed \n");
