@@ -5,6 +5,14 @@ a minimum viable product to load and export recycle .REX and .RX2 audio and slic
 * inspect .rx2 and .rex audio loop file info with slice info
 * export to slices to .AUS bespoke audio file format
 
+## build
+``` bash
+mkdir build
+cd build
+cmake ..
+make
+```
+
 ## credit
 * based on rexlib from https://github.com/noorus/rexlib 
   * unfortunately this only works on windows 
