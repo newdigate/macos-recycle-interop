@@ -20,6 +20,8 @@ make
 * Loading dynamic library from .bundle image in macos from stack-overflow
   * https://stackoverflow.com/questions/54003455/cant-link-to-so-file-on-mac-with-cmake?answertab=votes#tab-top
 
-## REX-Shared-Library
-Macos bundle with shared recycle library from propellerheads
-* https://help.propellerheads.com/hc/en-us/articles/360002216393-REX-Shared-Library
+## dependencies
+* REX-Shared-Library
+  * library is loaded dynamically in run-time from .bundle disk image format
+  * Macos bundle with shared recycle library available from propellerheads
+  * https://help.propellerheads.com/hc/en-us/articles/360002216393-REX-Shared-Library
