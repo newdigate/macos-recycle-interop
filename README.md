@@ -23,5 +23,5 @@ make
 ## dependencies
 * REX-Shared-Library
   * library is loaded dynamically in run-time from .bundle disk image format
-  * Macos bundle with shared recycle library available from propellerheads
-  * https://help.propellerheads.com/hc/en-us/articles/360002216393-REX-Shared-Library
+  * library is available as download from propellerheads
+    * https://help.propellerheads.com/hc/en-us/articles/360002216393-REX-Shared-Library
