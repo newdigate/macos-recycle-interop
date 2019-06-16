@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cstdio>
 #include <string>
-#import <mach-o/dyld.h>
 #include <fstream>
 #include "headers/REXSharedLib.h"
 
