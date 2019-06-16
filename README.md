@@ -1,4 +1,4 @@
-# exporting recycle .REX audio loop files on macos
+# exporting recycle rex & rx2 audio loop files on macos
 
 load and export recycle .REX and .RX2 audio and slice information
 * dynamically load the REX Shared Library (available as download from propellerheads, see below...) 
