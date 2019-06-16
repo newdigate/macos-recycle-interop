@@ -5,6 +5,17 @@ a minimum viable product to load and export recycle .REX and .RX2 audio and slic
 * inspect .rx2 and .rex audio loop file info with slice info
 * export to slices to .AUS bespoke audio file format
 
+## usage
+```
+usage:
+	rex2aus librarypath inputfile outputfile
+		librarypath : path to REX Shared Library.bundle
+		inputfile : path to .rex or .rx2 input file 
+		outputfile : path to .aus output file 
+
+	eg : rex2aus ~/rex/REX\ Shared\ Library.bundle kissbang.rx2 kissbang.aus
+```
+
 ## build
 ``` bash
 mkdir build
