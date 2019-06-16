@@ -13,18 +13,32 @@ void writeMetadataString(ofstream &myfile, const char *s);
 
 void writeMetadataUInt32(ofstream &file, uint32_t value);
 
+void usage() {
+    cout << "usage:\n";
+    cout << "\trex2aus librarypath inputfile outputfile\n";
+    cout << "\t\tlibrarypath : path to REX Shared Library.bundle\n";
+    cout << "\t\tinputfile : path to .rex or .rx2 input file \n";
+    cout << "\t\toutputfile : path to .aus output file \n\n";
+    cout << "\teg : rex2aus ~/rex/REX\\ Shared\\ Library.bundle kissbang.rx2 kissbang.aus\n";
+}
+
 CallbackReturn myCallback( long percent, void* data ) {
     std::cout << "myCallback(" << percent << ")\n";
     return CallbackReturn_Ok;
 }
 
-int main( )
+int main(int argc, char **argv)
 {
+    if (argc < 3) {
+        usage();
+        exit(-2);
+    }
+
     int rc;                // Success or failure result value
 
-    std::string bundlePath = "/Users/johnsmith/CLionProjects/demo-shared-lib/REXSharedLibrary.bundle/Contents/MacOS/REX Shared Library";
-    std::string inputREXfile = "../kissbang.rx2";
-    std::string outputAUSfile = "../kissbang.aus";  // audio slice file extension .aus ?
+    std::string bundlePath = string(argv[1]) + "/Contents/MacOS/REX Shared Library";
+    std::string inputREXfile = argv[2];
+    std::string outputAUSfile = argv[3];  // audio slice file extension .aus ?
     REXNative rex = REXNative(bundlePath);
 
     int open_result = rex.fnOpen1();
