@@ -1,4 +1,5 @@
-# macos recycle interop
+# Loading and saving recycle .REX audio loop files on macos
+
 a rough macos c++ sketch/proof-of-concept 
 * dynamically load the REX Shared Library (available as download from propellerheads, see below) 
 * inspect .rx2 and .rex audio loop file info with slice info
