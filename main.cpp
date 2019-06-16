@@ -1,5 +1,5 @@
 #include <iostream>
-#include <stdio.h>
+#include <cstdio>
 #include <string>
 #import <mach-o/dyld.h>
 #include <fstream>
@@ -9,34 +9,14 @@
 
 using namespace std;
 
+void writeMetadataString(ofstream &myfile, const char *s);
+
+void writeMetadataUInt32(ofstream &file, uint32_t value);
+
 CallbackReturn myCallback( long percent, void* data ) {
     std::cout << "myCallback(" << percent << ")\n";
     return CallbackReturn_Ok;
 }
-
-// swap_endian: https://stackoverflow.com/questions/105252/how-do-i-convert-between-big-endian-and-little-endian-values-in-c?answertab=votes#4956493
-#include <climits>
-
-template <typename T>
-T swap_endian(T u)
-{
-    static_assert (CHAR_BIT == 8, "CHAR_BIT != 8");
-
-    union
-    {
-        T u;
-        unsigned char u8[sizeof(T)];
-    } source, dest;
-
-    source.u = u;
-
-    for (size_t k = 0; k < sizeof(T); k++)
-        dest.u8[k] = source.u8[sizeof(T) - k - 1];
-
-    return dest.u;
-}
-
-
 
 int main( )
 {
@@ -47,9 +27,7 @@ int main( )
     std::string outputAUSfile = "../kissbang.aus";  // audio slice file extension .aus ?
     REXNative rex = REXNative(bundlePath);
 
-    /* Invoke the function and display the answer. */
     int open_result = rex.fnOpen1();
-    printf("The result is... %d\n", open_result);
 
     std::ifstream file(inputREXfile, std::ios::binary | std::ios::ate);
     std::streamsize size = file.tellg();
@@ -57,26 +35,28 @@ int main( )
 
     std::ofstream myfile;
     myfile.open (outputAUSfile);
-    myfile << "NN\0" ;
+    myfile << "SlicedAudio" ;
 
-    uint32_t bufu32[1];
-    bufu32[0] = swap_endian(size);
-    myfile.write((char*)bufu32, 4);
+    std::cout << " filesize is: " << size << "\n";
+    writeMetadataUInt32(myfile, size);
 
     Handle myHandle; //handle to loop opened by REX shared lib
     char data[size];
     if (file.read(data, size))
     {
-        std::cout << "read myfile bytes " << size << "\n";
+        std::streamsize bytes = file.gcount();
+        std::cout << "read myfile bytes " << bytes << "\n";
         /* worked! */
         Return rc = rex.fnREXCreate1(&myHandle, data, size, NULL, NULL) ;
         if (rc != Return_Ok) {
             std::cerr << "Failed to REXCreate \n " << rc;
+            exit(-2);
         } else {
             std::cout << "REXCreate succeeded (handle:" << myHandle << ")\n";
         }
     } else {
         std::cerr << "Failed to read REX file " << rc << "\n";
+        exit(-2);
     }
 
 
@@ -85,31 +65,24 @@ int main( )
     if ( rc != Return_Ok ) {
         std::cerr << "fnREXGetCreatorInfo failed  to read Creator info " << rc << "\n";
     }
-    myfile << "-";
-    uint16_t bbb[1];
-    bbb[0] = strlen(creator.name);
-    myfile.write((char*)bbb, 2);
-    std::cout << "name:" << creator.name << "\n";
-    myfile << creator.name;
-    myfile << strlen(creator.copyright);
-    std::cout << "copyright:" << creator.copyright << "\n";
-    myfile << creator.copyright;
-    myfile << strlen(creator.url);
-    std::cout << "url:" << creator.url << "\n";
-    myfile << creator.url;
-    myfile << strlen(creator.email);
-    std::cout << "email:" << creator.email << "\n";
-    myfile << creator.email;
-    myfile << strlen(creator.description);
-    std::cout << "description:" << creator.description << "\n";
-    myfile << creator.description;
-
+    writeMetadataString(myfile, creator.name);
+    writeMetadataString(myfile, creator.copyright);
+    writeMetadataString(myfile, creator.url);
+    writeMetadataString(myfile, creator.email);
+    writeMetadataString(myfile, creator.description);
 
     Info info;
     rc = rex.fnREXGetInfo1(myHandle, sizeof(Info), &info);
     if ( rc != Return_Ok ) {
         std::cerr << "REXGetInfo failed  to read info " << rc << "\n";
     }
+
+    writeMetadataUInt32(myfile, info.channels);
+    writeMetadataUInt32(myfile, info.sampleRate);
+    writeMetadataUInt32(myfile, info.bits);
+    writeMetadataUInt32(myfile, info.slices);
+    writeMetadataUInt32(myfile, info.tempo);
+    writeMetadataUInt32(myfile, info.nativeTempo);
 
     std::cout << "channels:" << info.channels << "\n";
     std::cout << "sampleRate:" << info.sampleRate << "\n";
@@ -118,19 +91,12 @@ int main( )
     std::cout << "tempo:" << info.tempo / 1000.0 << "\n";
     std::cout << "nativeTempo:" << info.nativeTempo / 1000.0 << "\n";
 
-
-
-
     for (long i =0; i<info.slices; i++) {
         Slice slice;
         rc = rex.fnREXGetSliceInfo1(myHandle, i, sizeof(Slice), &slice);
         if ( rc != Return_Ok ) {
             std::cerr << "REXGetSliceInfo1 failed  to read slice " << i << "\n";
         }
-        std::cout << "  slice:" << i << "\n";
-        std::cout << "      position:" << slice.position << "\n";
-        std::cout << "      length:" << slice.length << "\n";
-
 
         float *buffers[2];
         buffers[0] = new float[slice.length];
@@ -157,4 +123,19 @@ int main( )
     rex.fnClose1();
     printf("closed \n");
     return 0;
+}
+
+void writeMetadataUInt32(ofstream &file, uint32_t value) {
+    uint32_t b2[1];
+    b2[0] = value;
+    file.write((char*)b2, 4);
+}
+
+void writeMetadataString(ofstream &myfile, const char *s) {
+    uint8_t b[1];
+    b[0] = MIN(strlen(s), 255);
+    myfile.write((char*)b, 1);
+
+    printf("writeMetadataString(%d):%s\n", b[0], s);
+    myfile.write(s, b[0]);
 }
