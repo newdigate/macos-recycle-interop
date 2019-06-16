@@ -8,6 +8,15 @@
 #import <mach-o/dyld.h>
 #include <fstream>
 
+/* Macros for min/max. */
+#ifndef MIN
+#define MIN(a, b) (((a)<(b))?(a):(b))
+#endif /* MIN */
+
+#ifndef MAX
+#define MAX(a, b) (((a)>(b))?(a):(b))
+#endif  /* MAX */
+
 enum Return: uint32_t {
     Return_Failed = 0,
     Return_Ok,
